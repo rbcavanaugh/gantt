@@ -15,5 +15,5 @@ library(shinyWidgets)
 library(tidyverse)
 library(sortable)
 
-shiny::runGithub("rbcavanaugh/gantt")
+runGithub("rbcavanaugh/gantt")
 ```
