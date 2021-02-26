@@ -1,0 +1,30 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# gantt
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Make Gantt charts for grants using shiny. 
+
+```{r cars, message = F, warning = F, eval = F}
+# make sure these are installed
+library(shiny)
+library(shinyWidgets)
+library(tidyverse)
+library(sortable)
+
+shiny::runGithub("rbcavanaugh/gantt")
+```
+
