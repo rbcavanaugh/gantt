@@ -1,5 +1,10 @@
 
-
+###### to do #####
+# adjust colors
+# adjust number of quarters
+# adjust font
+# adjust wraping of rownames
+# write instructions
 
 library(shiny)
 library(shinyWidgets)
