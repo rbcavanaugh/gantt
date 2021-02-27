@@ -1,0 +1,17 @@
+#save_plot {
+  background-color: #286090;
+  color: #EEEEEE;
+}
+
+.default-sortable.rank-list-container {
+    border: 0px!important; 
+    padding: 2px!important;
+    margin: 2px!important;
+}
+
+#img-id {
+  font-size: 2rem;
+  color: #000;
+  margin-right: 5px;
+
+}
