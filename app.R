@@ -31,35 +31,43 @@ ui <-
     fluidRow(
       column(width = 6,
     tabsetPanel(
+      tabPanel("Instructions",br(), br(),
+               tags$ul(
+                 tags$li("Under 'Build Plot,' select the number of years for the grant and input each element in the grant timeline. The number of years can be changed at any time."),
+                 tags$li("Delete items by selecting the item in the dropdown menu and hitting the delete button."),
+                 tags$li("Item order can be modified using the box to the right by dragging items around."),
+                 tags$li("Once your items and their order are reasonably complete, click on the adjust plot tab."),
+                 tags$li("Check the 'Adjust size manually' box and change the font size, y-axis text wrapping, width, and height until the plot looks like you want it. The final plot size is based on the dimsensions and size of the plot you see, so I recommend maximizing your browser window"),
+                 tags$li("When you're satisfied, click the download button in the bottom right and download the plot. If the download doesn't work properly, you can also try to save the plot by right clicking on the plot and using 'save image as' or 'copy image'."),
+                 tags$li("If you think you will continue modifying the plot, I recommend hitting 'download csv as well so you can copy and paste next time."),
+                 tags$li("Note: If running via R-studio, you must view the application in your web browser (not the R-studio viewer)."),
+                 
+               )),
       tabPanel("Build Plot",
-               column(width = 6, br(),
- 
-               textInput("rowname", "Create Item", value = "Enter event"),
-               sliderTextInput(
-                 inputId = "range",
-                 label = "Choose a range:", 
-                 choices = seq(0,20),
-                 selected = c(0, 2)
-               ),
-               actionButton("enter", "Submit")
-               ),
                column(width = 6,
                       br(),
                       radioGroupButtons("len", "Number of Years",
                                         choices = c(2,3,4,5),
                                         selected = 5),
-               uiOutput("selectDelete"),
-               actionButton("delete", "Delete")
+                      uiOutput("selectDelete"),
+                      actionButton("delete", "Delete")
+               ),
+               column(width = 6, br(),
+ 
+               textInput("rowname", "Create Item", value = ""),
+               uiOutput('fiscal'),
+               actionButton("enter", "Submit")
                )
                ),
       tabPanel("Adjust Plot",
                column(width = 6,
                checkboxInput("manualsize", "Adjust Size Manually?"),
+               checkboxInput("grid", "More gridlines?"),
                sliderInput("basefont", "Font Size", min = 10, max = 40, step = 1, value = 16),
                sliderInput("wrap", "Wrap y-axis", min = 0, max = 100, step = 1, value = 40)
                ),
                column(width = 6,
-               checkboxInput("grid", "More gridlines?"),
+               textInput("xlab", "X-axis label", "Fiscal Quarter"),
                sliderInput("manualheightslider", "Height", min = 100, max = 1000, step = 20, value = 400),
                sliderInput("manualwidthslider", "Width", min = 500, max = 2000, step = 20, value = 1000)
                )
@@ -76,9 +84,11 @@ ui <-
       fluidRow(
       div(style = "padding:20px; position: fixed;bottom: 0;right:0",
       dropdownButton(up = T, right = T,
-        h4("How to download:"),
-        p("Adjust size. Adjust font. Download."),
+        h4("Download:"),
+        textInput("imagedownload", "file name (exclude extension)", value = 'gantt-image'),
         downloadButton("save_plot", "Download Plot"),
+        textInput("csvdownload", "file name (exclude extension)", value = 'gantt-data'),
+        downloadButton("save_csv", "Download CSV"),
         circle = TRUE, status = "primary",
         icon = icon("download"), width = "300px")
       )
@@ -125,6 +135,15 @@ server <- function(input, output, session) {
     )
   })
   
+  output$fiscal <- renderUI({
+    sliderTextInput(
+      inputId = "range",
+      label = "Choose a range (fiscal quaraters):", 
+      choices = seq(0,as.numeric(input$len)*4, 1),
+      selected = c(0, 4)
+    )
+  })
+  
   output$results_basic <- renderPrint({
     input$rank_list_basic # This matches the input_id of the rank list
   })
@@ -163,7 +182,7 @@ server <- function(input, output, session) {
             panel.grid.major.x = element_line(color = "white"),
             panel.grid.minor = element_line(color = "darkgrey"),
             plot.margin=unit(c(15,1,5,1),"mm")) +
-      ylab("Fiscal Quarter") +
+      ylab(input$xlab) +
       xlab(NULL) +
       annotate(geom = 'text', x = for_chart()$title[1], y = 2, label = "Year 1", vjust = -3.5, size = input$basefont/4) +
       annotate(geom = 'text', x = for_chart()$title[1], y = 6, label = "Year 2", vjust = -3.5, size = input$basefont/4) +
@@ -201,17 +220,22 @@ server <- function(input, output, session) {
   })
 
   output$save_plot <- downloadHandler(
-    filename ="gantt.png",
+    filename = function(){
+      paste0(input$imagedownload, ".png")
+    },
     content = function(file) {
-      # png(filename = file, 
-      #     width = input$manualwidthslider*2,
-      #     height = input$manualheightslider*2,
-      #     pointsize = 12*10)
-      # print(plot_out$gg)
-      # dev.off()
       ggsave(filename = file, plot = print(plot_out$gg),
              height = input$manualheightslider/75, width = input$manualwidthslider/75, dpi = 100)
      }
+  )
+  
+  output$save_csv <- downloadHandler(
+    filename = function(){
+      paste0(input$csvdownload, ".csv")
+    },
+    content = function(file) {
+      write.csv(for_chart(), file, row.names = T)
+    }
   )
   
 }
