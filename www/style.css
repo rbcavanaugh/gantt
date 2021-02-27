@@ -11,7 +11,13 @@
 
 #img-id {
   font-size: 2rem;
-  color: #000;
+  color: #EEEEEE;
   margin-right: 5px;
 
+}
+
+.navbar-default {
+    background-color: #158cba!important;
+    border-color: #e7e7e7!important;
+    color: #EEEEEE!important;
 }

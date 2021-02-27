@@ -26,7 +26,7 @@ ui <-
                  title = div(a(icon("github"),
                                href = "https://github.com/rbcavanaugh/gantt",
                                id = "img-id",
-                               target = "_blank"),"Gantts for Grants"),
+                               target = "_blank"),"Gantts for Grants", style = "color: #EEEEEE;"),
                  id = "navbar", theme = shinytheme("lumen"),
     fluidRow(
       column(width = 6,
