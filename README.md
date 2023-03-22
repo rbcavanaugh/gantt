@@ -14,6 +14,7 @@ library(shiny)
 library(shinyWidgets)
 library(tidyverse)
 library(sortable)
+library(plotly)
 
 runGitHub("rbcavanaugh/gantt")
 ```
